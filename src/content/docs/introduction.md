@@ -11,6 +11,7 @@ While the Stripe documentation is great, its user experience still lacks the fol
 - It only includes parameter arguments and no headers. I believe this is specific to their API.
 
 ## Real-Time Finance Data API
+
 I will be using the [Real-Time Finance Data API](https://rapidapi.com/letscrape-6bRBa3QguO5/api/real-time-finance-data) to show a sample of the API documentation. This API provides data from stocks, currency, etc. 
 The API sources its data from [Google Finance](https://finance.google.com)
 and other additional sources.
