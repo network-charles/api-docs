@@ -1,0 +1,67 @@
+---
+title: Currency Exchange Rate
+---
+
+The Currency Exchange Rate endpoint displays the exchange rate between two currencies.
+
+## Example
+
+{/* code begins */}
+import { Code } from 'astro-expressive-code/components';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import codeOne from 'one.bash?raw';
+import codeTwo from 'two.py?raw';
+
+<Tabs>
+  <TabItem label="Bash"><Code code={codeOne} lang="bash" /></TabItem>
+  <TabItem label="Python"><Code code={codeTwo} lang="python" /></TabItem>
+</Tabs>
+{/* code ends */}
+
+## Endpoint
+
+---
+
+- `GET` - /currency-exchange-rate
+
+## Request
+
+---
+
+This endpoint contains the following arguments:
+
+**Headers**
+
+- `x-rapidapi-key` (string, required): Your API key
+- `x-rapidapi-host` (string, required): The server URL, excluding the protocol part of the URL, "https://".
+
+**Parameters**
+
+- `from_symbol` (string, required): The currency you are converting from.
+- `to_symbol` (string, required): The currency you are converting to.
+- `language` (string): Your preferred language
+
+## Response
+
+---
+
+The response includes the following attributes, which provide details about the data returned.
+
+**Metadata**
+
+- `status` (string): Indicates the current status of the API response. Common values might include "success", "error", or other status indicators that provide insight into the result of the API call.
+
+- `request_id` (string): A unique identifier for the API request. This can be used for tracking and debugging purposes, allowing you to trace specific requests in logs or support inquiries.
+
+**Response data**
+
+The `data` object includes the following response attributes:
+
+---
+
+- `from_symbol` (string): The currency you are converting from.
+- `to_symbol` (string): The currency you are converting to.
+- `type` (string) The type of currency
+- `exchange_rate` (float): The current exchange rate after comparing both currencies.
+- `previous_close` (float): The previous close.
+- `last_update_utc` (integer): The time this query was made.
