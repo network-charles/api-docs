@@ -1,0 +1,33 @@
+openapi: '3.0.3'
+info:
+  title: Get Financial Portfolio
+  version: '1.0'
+servers:
+  - url: http://127.0.0.1:5000
+paths:
+  /financial-portfolio/{portfolio_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      parameters:
+        - in: header
+          name: x-api-host
+          required: true
+          schema:
+            type: string
+            example: finance-data.api.com
+        - in: header
+          name: x-api-key
+          required: true
+          schema:
+            type: string
+            example: YOUR_API_KEY
+        - in: path
+          name: portfolio_id
+          required: true
+          schema:
+            type: string
+            example: YOUR_PORTFOLIO_ID

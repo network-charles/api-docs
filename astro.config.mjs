@@ -8,7 +8,7 @@ export default defineConfig({
   	base: 'api-docs',
 	integrations: [
 		starlight({
-			title: 'My Docs',
+			title: 'My API Docs Project',
 			social: {
 				github: 'https://github.com/withastro/starlight',
 			},
@@ -28,12 +28,11 @@ export default defineConfig({
 				},
 				{
 					label: 'Endpoints',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{
-							label: 'Currency Exchange Rate', slug: 'endpoints/currency-exchange-rate/currency-exchange-rate'
-						},
-					],
+					autogenerate: { directory: 'endpoints' },
+				},
+				{
+					label: 'Tasks',
+					autogenerate: { directory: 'tasks' },
 				},
 				{
 					label: 'Reference',

@@ -1,0 +1,71 @@
+---
+title: Update Financial Portfolio
+---
+
+The Update Financial Portfolio update endpoint allows you to update the balance of an existing portfolio.
+
+## Endpoint
+
+---
+
+- `PATCH` - /financial-portfolio/{`portfolio_id`}
+
+## Example
+
+{/* code begins */}
+import { Code } from 'astro-expressive-code/components';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import codeOne from 'patch/patch-one.bash?raw';
+import codeTwo from 'patch/patch-two.py?raw';
+import codeThree from 'patch/patch-three.yml?raw';
+
+<Tabs>
+  <TabItem label="Bash">
+    <Code code={codeOne} lang="bash" />
+  </TabItem>
+  <TabItem label="Python">
+    <Code code={codeTwo} lang="python" />
+  </TabItem>
+  <TabItem label="YAML">
+    <Code code={codeThree} lang="yaml" />
+  </TabItem>
+</Tabs>
+{/* code ends */}
+
+## Request
+
+---
+
+This endpoint contains the following arguments:
+
+**Headers**
+
+- `x-rapidapi-key` (string, required): Your API key
+- `x-rapidapi-host` (string, required): The server URL, excluding the protocol part of the URL, "https://".
+
+**Parameters**
+
+- `new_balance` (string, required): The updated balance for the portfolio.
+- `portfolio_id` (float, required): The unique identifier of the portfolio to be updated.
+
+## Response
+
+---
+
+The response includes the following attributes, which provide details about the data returned.
+
+**Metadata**
+
+- `status` (string): Indicates the current status of the API response. Values include include "success" or "error".
+
+- `message` (string): A human-readable message indicating the result of the request.
+
+**Response data**
+
+The `portfolio` object includes the following response attributes:
+
+---
+
+- `portfolio_id` (string): A unique identifier for the portfolio.
+- `new_balance` (float): The updated balance of the portfolio.
+- `update_time` (string): The time when the portfolio was created in UTC.

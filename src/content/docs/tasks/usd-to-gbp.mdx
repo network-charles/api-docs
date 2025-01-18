@@ -1,0 +1,31 @@
+---
+title: Convert GBP to USD
+---
+
+To convert GBP to USD using a simple API request, you should setup [your
+enviroment](/api-docs/getting-started/set-up), and use the following `curl` command:
+
+**Request**
+
+```bash
+curl -X GET "http://127.0.0.1:5000/currency-exchange-rate?from_symbol=USD&to_symbol=NGN" \
+-H "x-api-host: finance-data.api.com" \
+-H "x-api-key: 1234567890"
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "exchange_rate": 1587.4104,
+    "from_symbol": "USD",
+    "last_update_utc": "2025-01-18 19:29:50",
+    "previous_close": 1501.27,
+    "to_symbol": "NGN",
+    "type": "currency"
+  },
+  "request_id": "59f8125c-90a1-4d33-a139-67b83b09017e",
+  "status": "OK"
+}
+```

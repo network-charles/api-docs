@@ -7,13 +7,13 @@ value when interacting with the API.
 
 ## HTTP Status Codes
 
-| HTTP Code          | Response          | Meaning                                         |     |
-| ------------------ | ----------------- | ----------------------------------------------- | --- |
-| 200                | OK                | Requests are valid                              |     |
-| 400                | Bad request       | Missing a request parameter                     |     |
-| 401                | Unauthorized      | Invalid or Missing API Key                      |     |
-| 402                | Request Failed    | Valid query parameters but the request failed   | ?   |
-| 403                | Forbidden         | Used an API Key no longer subscribed to the API |     |
-| 409                | Conflict          | Idempotent API keys                             | ?   |
-| 429                | Too Many Requests | You simultanously sent too many API requests    |     |
-| 500, 502, 503, 504 | Server Errors     |                                                 | ?   |
+| HTTP Code          | Response          | Meaning                                         |
+| ------------------ | ----------------- | ----------------------------------------------- |
+| 200                | OK                | Requests are valid                              |
+| 400                | Bad request       | Missing a request parameter                     |
+| 401                | Unauthorized      | Invalid or Missing API Key                      |
+| 402                | Request Failed    | Valid query parameters but the request failed   |
+| 403                | Forbidden         | Used an API Key no longer subscribed to the API |
+| 409                | Conflict          | Idempotent API keys                             |
+| 429                | Too Many Requests | You simultanously sent too many API requests    |
+| 500, 502, 503, 504 | Server Errors     | Internal server error                           |

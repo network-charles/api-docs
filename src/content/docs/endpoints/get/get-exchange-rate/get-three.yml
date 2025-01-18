@@ -22,7 +22,7 @@ paths:
           required: true
           schema:
             type: string
-            example: 1234567890
+            example: YOUR_API_KEY
         - in: query
           name: from_symbol
           required: true
