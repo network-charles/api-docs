@@ -11,10 +11,12 @@ import { Code } from 'astro-expressive-code/components';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 import codeOne from 'one.bash?raw';
 import codeTwo from 'two.py?raw';
+import codeThree from 'finance.yml?raw';
 
 <Tabs>
   <TabItem label="Bash"><Code code={codeOne} lang="bash" /></TabItem>
   <TabItem label="Python"><Code code={codeTwo} lang="python" /></TabItem>
+  <TabItem label="YAML"><Code code={codeThree} lang="yaml" /></TabItem>
 </Tabs>
 {/* code ends */}
 
@@ -65,3 +67,20 @@ The `data` object includes the following response attributes:
 - `exchange_rate` (float): The current exchange rate after comparing both currencies.
 - `previous_close` (float): The previous close.
 - `last_update_utc` (integer): The time this query was made.
+
+**Response Example**
+
+```json
+{
+  "status": "OK",
+  "request_id": "1fe59e09-ca66-46ce-bd65-dcd5a7568f40",
+  "data": {
+    "from_symbol": "USD",
+    "to_symbol": "NGN",
+    "type": "currency",
+    "exchange_rate": 1555.17,
+    "previous_close": 1555.5,
+    "last_update_utc": "2025-01-16 05:29:05"
+  }
+}
+```

@@ -13,24 +13,36 @@ export default defineConfig({
 				github: 'https://github.com/withastro/starlight',
 			},
 			sidebar: [
+
 				{
-					label: 'Introduction',
+					label: 'Getting started',
 					items: [
-						{ label: 'Introduction', slug: 'introduction' },
-					]
+						// Each item here is one entry in the navigation menu.
+						'getting-started/introduction',
+						'getting-started/set-up'
+					],
+				},
+				{
+					label: 'Concept',
+					autogenerate: { directory: 'concept' },
 				},
 				{
 					label: 'Endpoints',
 					items: [
 						// Each item here is one entry in the navigation menu.
 						{
-							label: 'Currency Exchange Rate', slug: 'endpoints/currency_exchange_rate/currency_exchange_rate' },
+							label: 'Currency Exchange Rate', slug: 'endpoints/currency-exchange-rate/currency-exchange-rate'
+						},
 					],
 				},
-				// {
-				// 	label: 'Reference',
-				// 	autogenerate: { directory: 'reference' },
-				// },
+				{
+					label: 'Reference',
+					autogenerate: { directory: 'reference' },
+				},
+				{
+					label: 'Governance',
+					autogenerate: { directory: 'governance' },
+				},
 			],
 		}),
 	],
