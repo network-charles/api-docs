@@ -1,6 +1,16 @@
+import os
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
+
+DEFAULT_API_KEY = os.getenv('API_KEY')
+
+@app.route('/get-api-key', methods=['GET'])
+def get_api_key():
+    return jsonify({
+        "success": True,
+        "api_key": DEFAULT_API_KEY
+    })
 
 @app.route('/currency-exchange-rate', methods=['GET'])
 def mock_currency_exchange_rate():

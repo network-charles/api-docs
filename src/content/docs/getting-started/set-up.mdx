@@ -17,7 +17,7 @@ python -m venv venv
 
 source venv/bin/activate  # macOS/Linux
 
-venv\Scripts\activate     # Windows
+venv\Scripts\activate  # Windows
 ```
 
 ## Install the Flask Library
@@ -26,9 +26,29 @@ venv\Scripts\activate     # Windows
 pip3 install flask
 ```
 
+## Create your API Key
+
+```bash
+export API_KEY=1234567890
+nano ~/.zshrc # For macOS
+source ~/.zshrc # Apply changes
+
+nano ~/.bashrc  # For most Linux distributions
+source ~/.bashrc # Apply changes
+
+nano ~/.profile  # For compatibility in some environments
+source ~/.profile # Apply changes
+```
+
 ## Create the Flask App
 
 ```bash
 wget https://raw.githubusercontent.com/network-charles/api-docs/refs/heads/main/src/content/docs/getting-started/mock-api.py
 python3 mock-api.py   # Append & so it runs in the background
+```
+
+# Verify your API Key
+
+```bash
+curl -X GET http://127.0.0.1:5000/get-api-key
 ```

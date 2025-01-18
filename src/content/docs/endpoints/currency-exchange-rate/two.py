@@ -1,15 +1,21 @@
-import http.client
+import requests
+import os
 
-conn = http.client.HTTPSConnection("real-time-finance-data.p.rapidapi.com")
-
+# Define the endpoint and headers
+url = "http://127.0.0.1:5000/currency-exchange-rate"
+DEFAULT_API_KEY = os.getenv('API_KEY')
 headers = {
-    'x-rapidapi-key': "7c349ff51amsh15d8f29696cc225p1fe60fjsnca08a8eaed91",
-    'x-rapidapi-host': "real-time-finance-data.p.rapidapi.com"
+    "x-rapidapi-host": "finance-data.api.com",
+    "x-rapidapi-key": DEFAULT_API_KEY
+}
+params = {
+    "from_symbol": "USD",
+    "to_symbol": "NGN"
 }
 
-conn.request("GET", "/currency-news?from_symbol=USD&to_symbol=EUR&language=en", headers=headers)
+# Make the GET request
+response = requests.get(url, headers=headers, params=params)
 
-res = conn.getresponse()
-data = res.read()
-
-print(data.decode("utf-8"))
+# Print the status code and response data
+print("Status Code:", response.status_code)
+print("Response JSON:", response.json())
