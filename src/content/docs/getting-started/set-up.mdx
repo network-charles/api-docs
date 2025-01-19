@@ -5,50 +5,56 @@ title: Enviroment Setup
 This guides you on how to set up the development for interacting with this API
 locally.
 
-## Prerequisites
+import { Steps } from "@astrojs/starlight/components";
 
-- **Python (3.7 or later)**: You can download Python from the [official documentation](https://www.python.org/downloads/).
-- **Pip3**: Python comes pre-installed with Pip3, a package manager.
+<Steps>
 
-## Create a Virtual Enviroment
+1. Prerequisites
 
-```bash
-python -m venv venv
+   - **Python (3.7 or later)**: You can download Python from the [official documentation](https://www.python.org/downloads/).
+   - **Pip3**: Python comes pre-installed with Pip3, a package manager.
 
-source venv/bin/activate  # macOS/Linux
+2. Create a Virtual Enviroment
 
-venv\Scripts\activate  # Windows
-```
+   ```bash
+   python -m venv venv
 
-## Install the Flask Library
+   source venv/bin/activate  # macOS/Linux
 
-```python
-pip3 install flask
-```
+   venv\Scripts\activate  # Windows
+   ```
 
-## Create your API Key
+3. Install the Flask Library
 
-```bash
-export API_KEY=1234567890
-nano ~/.zshrc # For macOS
-source ~/.zshrc # Apply changes
+   ```python
+   pip3 install flask
+   ```
 
-nano ~/.bashrc  # For most Linux distributions
-source ~/.bashrc # Apply changes
+4. Create your API Key
 
-nano ~/.profile  # For compatibility in some environments
-source ~/.profile # Apply changes
-```
+   ```bash
+   export API_KEY=1234567890
+   nano ~/.zshrc # For macOS
+   source ~/.zshrc # Apply changes
 
-## Create the Flask App
+   nano ~/.bashrc  # For most Linux distributions
+   source ~/.bashrc # Apply changes
 
-```bash
-wget https://raw.githubusercontent.com/network-charles/api-docs/refs/heads/main/src/content/docs/getting-started/mock-api.py
-python3 mock-api.py   # Append & so it runs in the background
-```
+   nano ~/.profile  # For compatibility in some environments
+   source ~/.profile # Apply changes
+   ```
 
-# Verify your API Key
+5. Create the Flask App
 
-```bash
-curl -X GET http://127.0.0.1:5000/get-api-key
-```
+   ```bash
+   wget https://raw.githubusercontent.com/network-charles/api-docs/refs/heads/main/src/content/docs/getting-started/mock-api.py
+   python3 mock-api.py   # Append & so it runs in the background
+   ```
+
+6. Verify your API Key
+
+   ```bash
+   curl -X GET http://127.0.0.1:5000/get-api-key
+   ```
+
+</Steps>

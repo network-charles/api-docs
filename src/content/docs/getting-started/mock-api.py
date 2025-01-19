@@ -21,6 +21,46 @@ request_log = defaultdict(list)
 RATE_LIMIT = 5  # Max requests per time window
 TIME_WINDOW = 60  # Time window in seconds (e.g., 60 seconds = 1 minute)
 
+# For HTTP 409 Error
+def check_rate_limit():
+    # Rate limiting: Check if the request exceeds the rate limit
+    client_ip = request.remote_addr
+    current_time = time.time()
+    
+    # Remove timestamps older than the time window (rate-limiting)
+    request_log[client_ip] = [timestamp for timestamp in request_log[client_ip] if current_time - timestamp < TIME_WINDOW]
+
+    # Check if the number of requests exceeds the rate limit
+    if len(request_log[client_ip]) >= RATE_LIMIT:
+        return jsonify({"error": "Too many requests"}), 429  # Too Many Requests
+
+    # Log the current request timestamp
+    request_log[client_ip].append(current_time)
+    
+# For HTTP 5xx Errors
+def simulate_server_errors(param1, param2):
+    """
+    Simulate different server errors based on the values of two parameters.
+    Args:
+        param1: The first parameter to check (e.g., 'from_symbol').
+        param2: The second parameter to check (e.g., 'to_symbol').
+    Returns:
+        A tuple (response, status_code) if an error is simulated, or None if no error occurs.
+    """
+    if param1 == "SERVER_500" or param2 == "SERVER_500":
+        return jsonify({"error": "Internal server error"}), 500  # 500 Internal Server Error
+
+    if param1 == "SERVER_502" or param2 == "SERVER_502":
+        return jsonify({"error": "Bad Gateway"}), 502  # 502 Bad Gateway
+
+    if param1 == "SERVER_503" or param2 == "SERVER_503":
+        return jsonify({"error": "Service Unavailable"}), 503  # 503 Service Unavailable
+
+    if param1 == "SERVER_504" or param2 == "SERVER_504":
+        return jsonify({"error": "Gateway Timeout"}), 504  # 504 Gateway Timeout
+
+    return None
+
 @app.route('/currency-exchange-rate', methods=['GET'])
 def mock_currency_exchange_rate():
     # Get query parameters and headers
@@ -39,19 +79,10 @@ def mock_currency_exchange_rate():
     if api_key != "1234567890":
         return jsonify({"error": "Invalid API key"}), 403  # Forbidden
 
-    # Rate limiting: Check if the request exceeds the rate limit
-    client_ip = request.remote_addr
-    current_time = time.time()
-    
-    # Remove timestamps older than the time window (rate-limiting)
-    request_log[client_ip] = [timestamp for timestamp in request_log[client_ip] if current_time - timestamp < TIME_WINDOW]
-
-    # Check if the number of requests exceeds the rate limit
-    if len(request_log[client_ip]) >= RATE_LIMIT:
-        return jsonify({"error": "Too many requests"}), 429  # Too Many Requests
-
-    # Log the current request timestamp
-    request_log[client_ip].append(current_time)
+    # Check rate limit
+    rate_limit_response = check_rate_limit()
+    if rate_limit_response:
+        return rate_limit_response
 
     # Check for missing query parameters
     if not from_symbol or not to_symbol:
@@ -65,18 +96,23 @@ def mock_currency_exchange_rate():
     if from_symbol == to_symbol:
         return jsonify({"error": "Conflict: Cannot exchange the same currency"}), 409  # Conflict
 
-    # Simulate different server errors based on the query parameters
-    if from_symbol == "SERVER_500":
-        return jsonify({"error": "Internal server error"}), 500  # 500 Internal Server Error
+    # # Simulate different server errors based on the query parameters
+    # if from_symbol == "SERVER_500" or to_symbol == "SERVER_500":
+    #     return jsonify({"error": "Internal server error"}), 500  # 500 Internal Server Error
     
-    if from_symbol == "SERVER_502":
-        return jsonify({"error": "Bad Gateway"}), 502  # 502 Bad Gateway
+    # if from_symbol == "SERVER_502" or to_symbol == "SERVER_502":
+    #     return jsonify({"error": "Bad Gateway"}), 502  # 502 Bad Gateway
     
-    if from_symbol == "SERVER_503":
-        return jsonify({"error": "Service Unavailable"}), 503  # 503 Service Unavailable
+    # if from_symbol == "SERVER_503" or to_symbol == "SERVER_503":
+    #     return jsonify({"error": "Service Unavailable"}), 503  # 503 Service Unavailable
     
-    if from_symbol == "SERVER_504":
-        return jsonify({"error": "Gateway Timeout"}), 504  # 504 Gateway Timeout
+    # if from_symbol == "SERVER_504" or to_symbol == "SERVER_504":
+    #     return jsonify({"error": "Gateway Timeout"}), 504  # 504 Gateway Timeout
+
+    # Check for server errors
+    error_response = simulate_server_errors(from_symbol, to_symbol)
+    if error_response:
+        return error_response
 
     # Get current UTC time
     current_utc_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
@@ -119,6 +155,11 @@ def create_portfolio():
     if api_key != DEFAULT_API_KEY:
         return jsonify({"error": "Invalid API key"}), 403  # Forbidden
 
+    # Check rate limit
+    rate_limit_response = check_rate_limit()
+    if rate_limit_response:
+        return rate_limit_response
+    
     data = request.get_json()
 
     # Validate required fields in request body
@@ -128,6 +169,16 @@ def create_portfolio():
     portfolio_name = data['portfolio_name']
     initial_balance = data['initial_balance']
 
+    # Check for missing query parameters
+    if not portfolio_name or not initial_balance:
+        return jsonify({"error": "Missing required query parameters"}), 400  # Bad Request
+
+    # Check for server errors
+    error_response = simulate_server_errors(portfolio_name, None)
+    if error_response:
+        return error_response
+
+    
     # Simulate creating a portfolio with an ID and an initial balance
     portfolio_id = str(random.randint(1000, 9999))
     creation_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
@@ -140,6 +191,10 @@ def create_portfolio():
         "creation_time": creation_time
     }
 
+    # Simulate external service failure
+    if portfolio_name == "SERVICE_UNAVAILABLE":
+        return jsonify({"error": "The external service is unavailable. Please try again later."}), 402  # Request Failed
+    
     return jsonify({
         "status": "OK",
         "message": "Portfolio created successfully",
@@ -163,12 +218,25 @@ def get_portfolio(portfolio_id):
     if api_key != DEFAULT_API_KEY:
         return jsonify({"error": "Invalid API key"}), 403  # Forbidden
 
+    # Check rate limit
+    rate_limit_response = check_rate_limit()
+    if rate_limit_response:
+        return rate_limit_response
+
     # Retrieve the portfolio from the portfolios dictionary
     portfolio = portfolios.get(portfolio_id)
+
+    # Check for missing query parameters
+    if not portfolio:
+        return jsonify({"error": "Missing required query parameters"}), 400  # Bad Request
 
     if not portfolio:
         return jsonify({"error": "Portfolio not found"}), 404  # Not Found
 
+    # Simulate external service failure
+    if portfolio == 402:
+        return jsonify({"error": "The external service is unavailable. Please try again later."}), 402  # Request Failed
+    
     return jsonify({
         "status": "OK",
         "portfolio": portfolio
@@ -191,6 +259,11 @@ def update_portfolio(portfolio_id):
     if api_key != DEFAULT_API_KEY:
         return jsonify({"error": "Invalid API key"}), 403  # Forbidden
 
+    # Check rate limit
+    rate_limit_response = check_rate_limit()
+    if rate_limit_response:
+        return rate_limit_response
+
     data = request.get_json()
 
     # Validate required fields in request body
@@ -204,6 +277,10 @@ def update_portfolio(portfolio_id):
     if not portfolio:
         return jsonify({"error": "Portfolio not found"}), 404  # Not Found
 
+    # Simulate external service failure
+    if portfolio == 402:
+        return jsonify({"error": "The external service is unavailable. Please try again later."}), 402  # Request Failed
+    
     # Simulate updating the portfolio balance
     portfolio['initial_balance'] = new_balance
     update_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
@@ -235,10 +312,19 @@ def delete_portfolio(portfolio_id):
     if api_key != DEFAULT_API_KEY:
         return jsonify({"error": "Invalid API key"}), 403  # Forbidden
 
+    # Check rate limit
+    rate_limit_response = check_rate_limit()
+    if rate_limit_response:
+        return rate_limit_response
+
     # Check if the portfolio exists
     if portfolio_id not in portfolios:
         return jsonify({"error": "Portfolio not found"}), 404  # Not Found
 
+    # Simulate external service failure
+    if portfolio == 402:
+        return jsonify({"error": "The external service is unavailable. Please try again later."}), 402  # Request Failed
+    
     # Simulate deleting the portfolio by ID
     deletion_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     del portfolios[portfolio_id]

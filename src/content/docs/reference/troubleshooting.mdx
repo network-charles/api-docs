@@ -1,0 +1,122 @@
+---
+title: Troubleshooting Tips
+---
+
+## How to Deal With Rate Limit Errors
+
+```json
+{ "error": "Too many requests" }
+```
+
+All endpoints in this API has a rate limit configured
+which triggers an HTTP 429 error. Users can only send
+5 requests per minute.
+
+So, if you send >5 request in a minute, a HTTP 429 error
+pops up.
+
+### Currency Exchange Rate Endpoint
+
+Below is an example:
+
+import { Steps } from "@astrojs/starlight/components";
+
+<Steps>
+
+1. Set up [your
+   enviroment](/api-docs/getting-started/set-up).
+
+2. Try to exchange a currency using a loop.
+
+   ```bash
+   for i in {1..10}; do
+   curl -X GET "http://127.0.0.1:5000/currency-exchange-rate?from_symbol=USD&to_symbol=NGN" \
+   -H "x-api-host: finance-data.api.com" \
+   -H "x-api-key: 1234567890"
+   done
+   ```
+
+   **Response**
+
+   ```json
+   {"data":{"exchange_rate":1568.6175,"from_symbol":"USD","last_update_utc":"2025-01-19 11:00:38","previous_close":1516.35,"to_symbol":"NGN","type":"currency"},"request_id":"59f8125c-90a1-4d33-a139-67b83b09017e","status":"OK"}
+   {"data":{"exchange_rate":1587.5275,"from_symbol":"USD","last_update_utc":"2025-01-19 11:00:38","previous_close":1547.67,"to_symbol":"NGN","type":"currency"},"request_id":"59f8125c-90a1-4d33-a139-67b83b09017e","status":"OK"}
+   {"data":{"exchange_rate":1595.0579,"from_symbol":"USD","last_update_utc":"2025-01-19 11:00:38","previous_close":1513.48,"to_symbol":"NGN","type":"currency"},"request_id":"59f8125c-90a1-4d33-a139-67b83b09017e","status":"OK"}
+   {"data":{"exchange_rate":1565.434,"from_symbol":"USD","last_update_utc":"2025-01-19 11:00:38","previous_close":1511.57,"to_symbol":"NGN","type":"currency"},"request_id":"59f8125c-90a1-4d33-a139-67b83b09017e","status":"OK"}
+   {"data":{"exchange_rate":1582.2641,"from_symbol":"USD","last_update_utc":"2025-01-19 11:00:38","previous_close":1534.21,"to_symbol":"NGN","type":"currency"},"request_id":"59f8125c-90a1-4d33-a139-67b83b09017e","status":"OK"}
+   {"error":"Too many requests"}
+   {"error":"Too many requests"}
+   {"error":"Too many requests"}
+   {"error":"Too many requests"}
+   {"error":"Too many requests"}
+   ```
+
+</Steps>
+
+### Financial Portfolio Endpoint
+
+<Steps>
+
+1. Set up [your
+   enviroment](/api-docs/getting-started/set-up).
+
+2. Create your portfolio.
+
+   ```bash
+   curl -X POST http://127.0.0.1:5000/financial-portfolio \
+   -H "x-api-host: finance-data.api.com" \
+   -H "x-api-key: 1234567890" \
+   -H "Content-Type: application/json" \
+   -d '{
+   "portfolio_name": "Retirement Fund",
+   "initial_balance": 50000
+   }'
+   ```
+
+   ```json
+   {
+     "message": "Portfolio created successfully",
+     "portfolio": {
+       "creation_time": "2025-01-19 12:01:17",
+       "initial_balance": 50000,
+       "portfolio_id": "6206",
+       "portfolio_name": "Retirement Fund"
+     },
+     "status": "OK"
+   }
+   ```
+
+3. Try to view your portfolio severally using a loop. Update your portfolio_id to `6206` so it becomes `http://127.0.0.1:5000/financial-portfolio/6206`.
+
+   **Request**
+
+   ```bash
+   for i in {1..10}; do
+   curl -X GET http://127.0.0.1:5000/financial-portfolio/6206 \
+   -H "x-api-host: finance-data.api.com" \
+   -H "x-api-key: 1234567890"
+   done
+   ```
+
+   **Response**
+
+   ```json
+   {"portfolio":{"creation_time":"2025-01-19 12:01:17","initial_balance":50000,"portfolio_id":"6206","portfolio_name":"Retirement Fund"},"status":"OK"}
+   {"portfolio":{"creation_time":"2025-01-19 12:01:17","initial_balance":50000,"portfolio_id":"6206","portfolio_name":"Retirement Fund"},"status":"OK"}
+   {"portfolio":{"creation_time":"2025-01-19 12:01:17","initial_balance":50000,"portfolio_id":"6206","portfolio_name":"Retirement Fund"},"status":"OK"}
+   {"portfolio":{"creation_time":"2025-01-19 12:01:17","initial_balance":50000,"portfolio_id":"6206","portfolio_name":"Retirement Fund"},"status":"OK"}
+   {"portfolio":{"creation_time":"2025-01-19 12:01:17","initial_balance":50000,"portfolio_id":"6206","portfolio_name":"Retirement Fund"},"status":"OK"}
+   {"error":"Too many requests"}
+   {"error":"Too many requests"}
+   {"error":"Too many requests"}
+   {"error":"Too many requests"}
+   {"error":"Too many requests"}
+   ```
+
+</Steps>
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside>
+  You can also trigger the loop when creating your portfolio if you want.
+</Aside>
