@@ -9,13 +9,6 @@ app = Flask(__name__)
 
 DEFAULT_API_KEY = os.getenv('API_KEY')
 
-@app.route('/get-api-key', methods=['GET'])
-def get_api_key():
-    return jsonify({
-        "success": True,
-        "api_key": DEFAULT_API_KEY
-    })
-
 # Rate-limiting data structure
 request_log = defaultdict(list)
 RATE_LIMIT = 5  # Max requests per time window
@@ -95,19 +88,6 @@ def mock_currency_exchange_rate():
     # Check for conflict: from_symbol is the same as to_symbol
     if from_symbol == to_symbol:
         return jsonify({"error": "Conflict: Cannot exchange the same currency"}), 409  # Conflict
-
-    # # Simulate different server errors based on the query parameters
-    # if from_symbol == "SERVER_500" or to_symbol == "SERVER_500":
-    #     return jsonify({"error": "Internal server error"}), 500  # 500 Internal Server Error
-    
-    # if from_symbol == "SERVER_502" or to_symbol == "SERVER_502":
-    #     return jsonify({"error": "Bad Gateway"}), 502  # 502 Bad Gateway
-    
-    # if from_symbol == "SERVER_503" or to_symbol == "SERVER_503":
-    #     return jsonify({"error": "Service Unavailable"}), 503  # 503 Service Unavailable
-    
-    # if from_symbol == "SERVER_504" or to_symbol == "SERVER_504":
-    #     return jsonify({"error": "Gateway Timeout"}), 504  # 504 Gateway Timeout
 
     # Check for server errors
     error_response = simulate_server_errors(from_symbol, to_symbol)
