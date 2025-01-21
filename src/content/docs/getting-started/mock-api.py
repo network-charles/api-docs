@@ -144,6 +144,8 @@ def create_portfolio():
     if rate_limit_response:
         return rate_limit_response
     
+    data = request.get_json()
+    
     portfolio_name = data['portfolio_name']
     initial_balance = data['initial_balance']
 
