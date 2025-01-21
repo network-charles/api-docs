@@ -40,16 +40,16 @@ def simulate_server_errors(param1, param2):
     Returns:
         A tuple (response, status_code) if an error is simulated, or None if no error occurs.
     """
-    if param1 == "SERVER_500" or param2 == "SERVER_500":
+    if param1 == "500" or param2 == "500":
         return jsonify({"error": "Internal server error"}), 500  # 500 Internal Server Error
 
-    if param1 == "SERVER_502" or param2 == "SERVER_502":
+    if param1 == "502" or param2 == "502":
         return jsonify({"error": "Bad Gateway"}), 502  # 502 Bad Gateway
 
-    if param1 == "SERVER_503" or param2 == "SERVER_503":
+    if param1 == "503" or param2 == "503":
         return jsonify({"error": "Service Unavailable"}), 503  # 503 Service Unavailable
 
-    if param1 == "SERVER_504" or param2 == "SERVER_504":
+    if param1 == "504" or param2 == "504":
         return jsonify({"error": "Gateway Timeout"}), 504  # 504 Gateway Timeout
 
     return None
@@ -79,11 +79,15 @@ def mock_currency_exchange_rate():
 
     # Check for missing query parameters
     if not from_symbol or not to_symbol:
-        return jsonify({"error": "Missing required query parameters"}), 400  # Bad Request
+        return jsonify({"error": "Missing required query parameters 'from_symbol' or 'to_symbol'"}), 400  # Bad Request
 
     # Simulate external service failure (e.g., unavailable exchange rate service)
     if from_symbol == "SERVICE_UNAVAILABLE" or to_symbol == "SERVICE_UNAVAILABLE":
         return jsonify({"error": "The external service is unavailable. Please try again later."}), 402  # Request Failed
+
+    # Simulate 404 Not Found based on specific conditions
+    if from_symbol == "NOT_FOUND" or to_symbol == "NOT_FOUND":
+        return jsonify({"error": "Resource not found"}), 404  # Not Found
 
     # Check for conflict: from_symbol is the same as to_symbol
     if from_symbol == to_symbol:
@@ -140,25 +144,18 @@ def create_portfolio():
     if rate_limit_response:
         return rate_limit_response
     
-    data = request.get_json()
-
-    # Validate required fields in request body
-    if not data or not data.get('portfolio_name') or not data.get('initial_balance'):
-        return jsonify({"error": "Missing required fields"}), 400  # Bad Request
-    
     portfolio_name = data['portfolio_name']
     initial_balance = data['initial_balance']
 
     # Check for missing query parameters
     if not portfolio_name or not initial_balance:
-        return jsonify({"error": "Missing required query parameters"}), 400  # Bad Request
+        return jsonify({"error": "Missing required query parameters 'portfolio_name' or 'initial_balance'"}), 400  # Bad Request
 
     # Check for server errors
     error_response = simulate_server_errors(portfolio_name, None)
     if error_response:
         return error_response
 
-    
     # Simulate creating a portfolio with an ID and an initial balance
     portfolio_id = str(random.randint(1000, 9999))
     creation_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
@@ -190,7 +187,7 @@ def get_portfolio(portfolio_id):
     api_key = request.headers.get('x-api-key')
 
     if not api_host or not api_key:
-        return jsonify({"error": "Missing required headers"}), 401  # Unauthorized
+        return jsonify({"error": "Missing required headers 'api_host' or 'api_key'"}), 401  # Unauthorized
 
     if api_host != "finance-data.api.com":
         return jsonify({"error": "Invalid x-api-host"}), 403  # Forbidden
@@ -208,15 +205,20 @@ def get_portfolio(portfolio_id):
 
     # Check for missing query parameters
     if not portfolio:
-        return jsonify({"error": "Missing required query parameters"}), 400  # Bad Request
+        return jsonify({"error": "Missing required query parameters 'portfolio_id'"}), 400  # Bad Request
 
     if not portfolio:
-        return jsonify({"error": "Portfolio not found"}), 404  # Not Found
+        return jsonify({"error": "Portfolio ID not found"}), 404  # Not Found
 
     # Simulate external service failure
     if portfolio == 402:
         return jsonify({"error": "The external service is unavailable. Please try again later."}), 402  # Request Failed
     
+    # Check for server errors
+    error_response = simulate_server_errors(portfolio, None)
+    if error_response:
+        return error_response
+
     return jsonify({
         "status": "OK",
         "portfolio": portfolio
@@ -231,7 +233,7 @@ def update_portfolio(portfolio_id):
     api_key = request.headers.get('x-api-key')
 
     if not api_host or not api_key:
-        return jsonify({"error": "Missing required headers"}), 401  # Unauthorized
+        return jsonify({"error": "Missing required headers 'api_host' or 'api_key"}), 401  # Unauthorized
 
     if api_host != "finance-data.api.com":
         return jsonify({"error": "Invalid x-api-host"}), 403  # Forbidden
@@ -255,15 +257,20 @@ def update_portfolio(portfolio_id):
     # Check if the portfolio exists
     portfolio = portfolios.get(portfolio_id)
     if not portfolio:
-        return jsonify({"error": "Portfolio not found"}), 404  # Not Found
+        return jsonify({"error": "Portfolio ID not found"}), 404  # Not Found
 
     # Simulate external service failure
     if portfolio == 402:
         return jsonify({"error": "The external service is unavailable. Please try again later."}), 402  # Request Failed
-    
+
     # Simulate updating the portfolio balance
     portfolio['initial_balance'] = new_balance
     update_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Check for server errors
+    error_response = simulate_server_errors(portfolio_id, new_balance)
+    if error_response:
+        return error_response
 
     return jsonify({
         "status": "OK",
@@ -284,7 +291,7 @@ def delete_portfolio(portfolio_id):
     api_key = request.headers.get('x-api-key')
 
     if not api_host or not api_key:
-        return jsonify({"error": "Missing required headers"}), 401  # Unauthorized
+        return jsonify({"error": "Missing required headers 'api_host' or 'api_key'"}), 401  # Unauthorized
 
     if api_host != "finance-data.api.com":
         return jsonify({"error": "Invalid x-api-host"}), 403  # Forbidden
@@ -299,12 +306,17 @@ def delete_portfolio(portfolio_id):
 
     # Check if the portfolio exists
     if portfolio_id not in portfolios:
-        return jsonify({"error": "Portfolio not found"}), 404  # Not Found
+        return jsonify({"error": "Portfolio ID not found"}), 404  # Not Found
 
     # Simulate external service failure
     if portfolio == 402:
         return jsonify({"error": "The external service is unavailable. Please try again later."}), 402  # Request Failed
     
+    # Check for server errors
+    error_response = simulate_server_errors(portfolio_id, None)
+    if error_response:
+        return error_response
+
     # Simulate deleting the portfolio by ID
     deletion_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     del portfolios[portfolio_id]
